@@ -22,7 +22,7 @@ function tree($array, $parent, $parts = array(), $step = 0)
             $t .=  '</li>';
         } else {
             $selected = (isset($parts[$step]) && $item == $parts[$step]);
-            $t .= '<li class="file'. ($selected ? ' active' : '') .'"><a href="'. $parent .'/'. $item . '">'.$item.'</a></li>';
+            $t .= '<li class="file'. ($selected ? ' active' : '') .'"><a href="'. $parent .'/'. $item . '?'. $GLOBALS['queryStr'].'">'.$item.'</a></li>';
         }
     }
 
@@ -31,6 +31,18 @@ function tree($array, $parent, $parts = array(), $step = 0)
     return $t;
 }
 ?>
+
+<div id="tree-pre-filter" class="input-group">
+  <form action="<?php echo $GLOBALS['requestUri']; ?>" method="get">
+    <input
+      type="text"
+      name="search"
+      id="tree-pre-filter-query" 
+      class="form-control input-sm"
+      placeholder="<?php echo $GLOBALS['preFilterPlaceHolder']; ?>"
+    >
+  </form>
+</div>
 
 <div id="tree-filter" class="input-group">
   <input type="text" id="tree-filter-query" class="form-control" placeholder="Search file &amp; directory names." aria-label="Search" aria-describedby="search-addon">
