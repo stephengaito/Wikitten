@@ -297,52 +297,31 @@ class Wiki
         }
     }
 
-    protected function _sortPathTree($pathTree) {
-      $directories = $pathTree['directories'];
-      $files       = $pathTree['files'];
-      uksort($files,       "strnatcasecmp");
-      foreach ($directories as $aKey => $aDirTree) {
-       $directories[$aKey] = $this->_sortPathTree($aDirTree);
-       }
-      uksort($directories, "strnatcasecmp");
-      return $directories + $files;
-    }
-
     protected function _getTree($dir = LIBRARY)
     {
-        $queryHash = $GLOBALS['queryHash'];
-        $search    = '.*'; 
-        if (!empty($queryHash['search'])) $search = $queryHash['search'];
-        $pathList = array();
-        $cmd ='cd '.$dir.'; grep -csinr "'.$search.'" * | grep "\.md:" ';
-        exec($cmd, $pathList);
-        $pathTree = array('directories' => array(), 'files' => array());
-        foreach ($pathList as $aPathNum) {
-          list($aPath, $aNum) = explode(':', $aPathNum);
-          if (intval($aNum) < 1) continue;
+        $return = array('directories' => array(), 'files' => array());
 
-          $directories = &$pathTree['directories'];
-          $files       = &$pathTree['files'];
-          $pathParts = explode('/', $aPath);
-          $lastPart = count($pathParts) - 1;
-
-          foreach ($pathParts as $pathIndex => $pathPart) {
-            if ($lastPart == $pathIndex) {
-              $files[$pathPart] = $pathPart;
-            } else {
-              if (!array_key_exists($pathPart, $directories)) {
-                $directories[$pathPart] = array(
-                  'directories' => array(),
-                  'files'       => array()
-                ); 
-              }
-              $files       = &$directories[$pathPart]['files'];
-              $directories = &$directories[$pathPart]['directories'];
+        $items = scandir($dir);
+        foreach ($items as $item) {
+            if (preg_match($this->_ignore, $item)) {
+                if ($this->_force_unignore === false || !preg_match($this->_force_unignore, $item)) {
+                    continue;
+                }
             }
-          }
+
+            $path = $dir . DIRECTORY_SEPARATOR . $item;
+            if (is_dir($path)) {
+                $return['directories'][$item] = $this->_getTree($path);
+                continue;
+            }
+
+            $return['files'][$item] = $item;
         }
 
-        return $this->_sortPathTree($pathTree);
+        uksort($return['directories'], "strnatcasecmp");
+        uksort($return['files'], "strnatcasecmp");
+
+        return $return['directories'] + $return['files'];
     }
 
     public function dispatch()
