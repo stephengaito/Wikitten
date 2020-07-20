@@ -69,7 +69,6 @@
         <hr/>
         <?php endif ?>
       <?php endif ?>
-      <?php $pathParts = pathinfo($page['file']) ?>
       <?php if ($svg): ?>
         <?php echo $svg; ?>
         <hr/>

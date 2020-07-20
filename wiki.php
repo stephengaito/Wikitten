@@ -98,6 +98,7 @@ class Wiki
                 'parts' => $parts,
                 'page' => $page_data,
                 'html' => $list,
+                'svg'  => false,
                 'is_dir' => true
             ));
             return;
@@ -126,6 +127,7 @@ class Wiki
                         . "<input type='submit' class='btn btn-primary' value='Create this page' />"
                         . "</form>"
                     ,
+                    'svg'       => false,
                     'is_dir'    => false
                 ));
             }
