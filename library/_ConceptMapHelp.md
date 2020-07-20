@@ -16,7 +16,7 @@ This `maps` and `links` meta-data will be displayed to the reader as a collectio
 
 The concept maps can be found in the `_maps` directory of the Wikitten ConceptMap. Each concept map can itself be cross-referenced using the `maps` and/or `links` meta-data entries. Each concept map can also contain any descriptive text the editor might want to write. However, the most important aspect of a concept map is an *interactive* concept map.
 
-The `theVortex` concept map, found in the `_maps` directory, is always (re)created. `theVortex` contains all concepts and associated links for the whole Concept Map.
+The [`theVortex`](_maps/theVortex.md) concept map, found in the `_maps` directory, is always (re)created. `theVortex` contains all concepts and associated links for the whole Concept Map.
 
 Each node in the concept map represents one concept entry. The reader can determine which concept entry each node corresponds to by hovering with the mouse over a given node. Double clicking on any node will open up that concept entry in a new browser tab.
 
