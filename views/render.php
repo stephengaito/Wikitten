@@ -46,6 +46,34 @@
     <div id="pastebin-notification" class="alert" style="display:none;"></div>
     <?php endif; ?>
     <div id="render">
+      <?php if (array_key_exists('maps', $page) or array_key_exists('links', $page)): ?>
+        <?php if (array_key_exists('maps', $page)): ?>
+        <div>
+        <strong>maps:</strong>
+        <?php foreach ($page['maps'] as $aMap): ?>
+          <a href="_maps/<?php echo $aMap ?>.md"><?php echo $aMap ?></a>
+        <?php endforeach ?>
+        </div>
+        <?php endif ?>
+        <?php if (array_key_exists('links', $page)): ?>
+        <div>
+        <?php foreach ($page['links'] as $aKey => $someLinks): ?>
+          <div>
+          <strong><?php echo $aKey ?>:</strong>
+          <?php foreach ($someLinks as $aLink): ?>
+            <a href="<?php echo $aLink ?>.md"><?php echo $aLink ?></a>
+          <?php endforeach ?>
+          </div>
+        <?php endforeach ?>
+        </div>
+        <hr/>
+        <?php endif ?>
+      <?php endif ?>
+      <?php $pathParts = pathinfo($page['file']) ?>
+      <?php if ($svg): ?>
+        <?php echo $svg; ?>
+        <hr/>
+      <?php endif ?>
         <?php echo $html; ?>
     </div>
     <script>
@@ -67,6 +95,8 @@
         <?php if (ENABLE_EDITING): ?>
             <div class="alert alert-info">
                 <i class="glyphicon glyphicon-pencil"></i> <strong>Editing is enabled</strong>. Use the "Save changes" button below the editor to commit modifications to this file.
+                <pre> "maps": [ "firstMap", "secondMap" ],
+ "links": { "see also": [ "aLink", "anotherLink" ] }  </pre>
             </div>
         <?php endif ?>
 

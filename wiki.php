@@ -12,7 +12,7 @@ class Wiki
         'htm' => 'HTML',
         'html' => 'HTML'
     );
-    protected $_ignore = "/^\..*|^CVS$/"; // Match dotfiles and CVS
+    protected $_ignore = "/^\..*|^CVS$|\.json$/"; // Match dotfiles, json (conceptMapper data files) and CVS
     protected $_force_unignore = false; // always show these files (false to disable)
 
     protected $_action;
@@ -171,12 +171,46 @@ class Wiki
             $html = \Wikitten\MarkdownExtra::defaultTransform($contents);
         }
 
-        if (empty(trim($html))) {
+        // add in concept mapper data
+        //
+        $pathInfo = pathinfo($path);
+        $jsonPath = $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.json';
+        $svg      = false;
+        if (file_exists($jsonPath)) {
+          // the following has been modified from:
+          // https://bl.ocks.org/mbostock/2675ff61ea5e063ede2b5d63c08020c7
+          // https://bl.ocks.org/puzzler10/4438752bb93f45dc5ad5214efaa12e4a
+          // http://www.puzzlr.org/zoom-in-d3-v4/
+          // https://stackoverflow.com/a/11809868
+          // https://stackoverflow.com/a/39449766
+          //
+          $jsonData = file_get_contents($jsonPath);
+          $svg = <<<EOSVG
+<style>
+.nodes circle {
+  pointer-events: all;
+  stroke: none;
+  stroke-width: 40px;
+}
+</style>
+<svg width = "800" height="600" ></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+var graph = $jsonData;
+</script>
+<script src="static/js/conceptmapper.js"></script>
+EOSVG;
+
+		#error_log("svg: [". $svg . "]");
+        }
+
+        if (empty(trim($html)) && !$svg ) {
             $html = "<h1>This page is empty</h1>\n";
         }
 
         $this->_view('render', array(
             'html' => $html,
+            'svg'  => $svg,
             'source' => $source,
             'extension' => $extension,
             'parts' => $parts,
@@ -454,6 +488,10 @@ class Wiki
             // Delete file and redirect too (but it will return 404)
             unlink($path);
         }
+
+        $updateCmd = 'php ' . __DIR__ . '/updateConceptMaps.php ' . LIBRARY . ' 2>&1 >> ' . LIBRARY .'/_ConceptMapLog.md &';
+        #error_log("updateConceptMaps cmd: [". $updateCmd ."]");
+        shell_exec($updateCmd);
 
         $redirect_url = BASE_URL . "/$file";
         header("HTTP/1.0 302 Found", true);
