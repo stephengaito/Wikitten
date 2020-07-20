@@ -99,8 +99,8 @@ class Wiki
                 'page' => $page_data,
                 'html' => $list,
                 'svg'  => false,
-                'is_dir' => true
-                'use_pastebinuse_pastebin' => $this->_usePasteBin()
+                'is_dir' => true,
+                'use_pastebin' => $this->_usePasteBin()
             ));
             return;
         }
@@ -129,8 +129,8 @@ class Wiki
                         . "</form>"
                     ,
                     'svg'       => false,
-                    'is_dir'    => false
-                    'use_pastebinuse_pastebin' => $this->_usePasteBin()
+                    'is_dir'    => false,
+                    'use_pastebin' => $this->_usePasteBin()
                 ));
             }
         } else {
@@ -220,6 +220,7 @@ EOSVG;
             'parts' => $parts,
             'page' => $page_data,
             'is_dir' => false,
+            'use_pastebin' => $this->_usePasteBin()
         ));
     }
 
